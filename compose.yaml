@@ -1,0 +1,102 @@
+version: '3.9'
+
+networks:
+  redis_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.200.0.0/16
+          ip_range: 10.200.200.0/26
+          gateway: 10.200.200.1
+
+volumes:
+  redis-node-0:
+  redis-node-1:
+  redis-node-2:
+  redis-node-3:
+  redis-node-4:
+  redis-node-5:
+  redis-node-6:
+  redis-node-7:
+  redis-node-8:
+  
+services:
+
+  redis-node-0: &node
+    container_name: redis.node.0
+    volumes:
+      - redis-node-0:/bitnami/redis/data
+    image: docker.io/bitnami/redis-cluster:7.2
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 60s
+    expose:
+      - 6379
+    networks:
+      - redis_network
+    env_file: .env
+
+
+  redis-node-1:
+    <<: *node
+    container_name: redis.node.1
+    volumes:
+      - redis-node-1:/bitnami/redis/data
+    depends_on:
+      - redis-node-0
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+      - redis-node-7
+      - redis-node-8
+    environment:
+      - 'REDIS_CLUSTER_CREATOR=yes'
+      - 'REDISCLI_AUTH=${REDIS_PASSWORD}'
+      - 'REDIS_CLUSTER_REPLICAS=2'
+
+  redis-node-2:
+    <<: *node
+    container_name: redis.node.2
+    volumes:
+      - redis-node-2:/bitnami/redis/data
+  
+  redis-node-3:
+    <<: *node
+    container_name: redis.node.3
+    volumes:
+      - redis-node-3:/bitnami/redis/data
+
+  redis-node-4:
+    <<: *node
+    container_name: redis.node.4
+    volumes:
+      - redis-node-4:/bitnami/redis/data
+
+  redis-node-5:
+    <<: *node
+    container_name: redis.node.5
+    volumes:
+      - redis-node-5:/bitnami/redis/data
+
+  redis-node-6:
+    <<: *node
+    container_name: redis.node.6
+    volumes:
+      - redis-node-6:/bitnami/redis/data
+
+  redis-node-7:
+    <<: *node
+    container_name: redis.node.7
+    volumes:
+      - redis-node-7:/bitnami/redis/data
+
+  redis-node-8:
+    <<: *node
+    container_name: redis.node.8
+    volumes:
+      - redis-node-8:/bitnami/redis/data
