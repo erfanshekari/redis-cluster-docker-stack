@@ -1,11 +1,11 @@
 version: '3.9'
 
 networks:
-  redis_network:
+  redis_cluster:
     driver: bridge
     ipam:
       config:
-        - subnet: 10.200.0.0/16
+        - subnet: 10.200.200.0/16
           ip_range: 10.200.200.0/26
           gateway: 10.200.200.1
 
@@ -35,9 +35,10 @@ services:
         window: 60s
     expose:
       - 6379
-    networks:
-      - redis_network
     env_file: .env
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.2
 
 
   redis-node-1:
@@ -58,45 +59,69 @@ services:
       - 'REDIS_CLUSTER_CREATOR=yes'
       - 'REDISCLI_AUTH=${REDIS_PASSWORD}'
       - 'REDIS_CLUSTER_REPLICAS=2'
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.3
 
   redis-node-2:
     <<: *node
     container_name: redis.node.2
     volumes:
       - redis-node-2:/bitnami/redis/data
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.4
   
   redis-node-3:
     <<: *node
     container_name: redis.node.3
     volumes:
       - redis-node-3:/bitnami/redis/data
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.5
 
   redis-node-4:
     <<: *node
     container_name: redis.node.4
     volumes:
       - redis-node-4:/bitnami/redis/data
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.6
 
   redis-node-5:
     <<: *node
     container_name: redis.node.5
     volumes:
       - redis-node-5:/bitnami/redis/data
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.7
 
   redis-node-6:
     <<: *node
     container_name: redis.node.6
     volumes:
       - redis-node-6:/bitnami/redis/data
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.8
 
   redis-node-7:
     <<: *node
     container_name: redis.node.7
     volumes:
       - redis-node-7:/bitnami/redis/data
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.9
 
   redis-node-8:
     <<: *node
     container_name: redis.node.8
     volumes:
       - redis-node-8:/bitnami/redis/data
+    networks:
+      redis_cluster:
+        ipv4_address: 10.200.200.10
